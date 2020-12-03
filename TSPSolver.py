@@ -164,14 +164,18 @@ class TSPSolver:
         *    Once a valid solution is found, increment the pheromone count on each path in the solution.
         *        Increment size is based on the total cost of the solution
         *    Decrement all pheromone counts for all edges in the list of cities
+        * End condition run ants in batches of BATCH_SIZE, and save the most common route as BSSF if better 
+        * than last BSSF. Once PERCENT_ANTS are on same path return that result. 
 
         CLASSES:
             Edge
                 - cost
                 - pheromoneCount
             Matrix
-                - Edge[][]
+                - numpy Edge[][]
                 - decrementAllPheromones()
                 - randomizer here?
+                
+        
         """
         pass
