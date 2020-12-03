@@ -154,4 +154,24 @@ class TSPSolver:
     """
 
     def fancy(self, time_allowance=60.0):
+        route = []
+        """
+        Ant colony algorithm
+        * Start at city index 0
+        * while node has children
+        *    Calculate the priority of each path based on pheromone count
+        *    Choose a random edge to follow (higher priority has more probability of being chosen)
+        *    Once a valid solution is found, increment the pheromone count on each path in the solution.
+        *        Increment size is based on the total cost of the solution
+        *    Decrement all pheromone counts for all edges in the list of cities
+
+        CLASSES:
+            Edge
+                - cost
+                - pheromoneCount
+            Matrix
+                - Edge[][]
+                - decrementAllPheromones()
+                - randomizer here?
+        """
         pass

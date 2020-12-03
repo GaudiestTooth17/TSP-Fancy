@@ -491,4 +491,5 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     w = Proj5GUI()
+    w.showMaximized()
     sys.exit(app.exec())
