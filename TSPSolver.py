@@ -159,14 +159,15 @@ class TSPSolver:
         cities = self._scenario.cities
 
         threshold = .50  # the percent of cities that follow same route for route to be accepted
-        batchSize = 50  # number of ants per batch
+        batchSize = 50  # number of solutions per batch
 
         results = {}
         cities = self._scenario.cities
         ncities = len(cities)
         foundTour = False
         count = 0
-        bssf = None
+        bssf = {}
+        bssf['cost'] = math.inf
 
 
         pheromoneMatrix = getPheromoneMatrix(ncities)
@@ -178,37 +179,43 @@ class TSPSolver:
 
             batchRoutes = []  # figure out way to check which route is most common in batch
 
-            for ant in range(batchSize):
+            while len(batchRoutes) < batchSize:
                 # runs an ant through the maze getting route then appending route to batchRoutes
                 if not time.time() - start_time < time_allowance:
                     break  # breaks loop if time is out
                 route = []  # List of city indexes
-                costMatrix = getCostMatrix(cities)
-                route.append(0)
+                costMatrix = getCostMatrix(cities)  # resets cost matrix each ant
+                route.append(0)  # starts at same place every time
+                antSuccess = True
                 for i in range(ncities):
                     # make the route
                     destinationIndex = getRandomEdge(costMatrix, pheromoneMatrix, route[-1])
-                    if (destinationIndex == -1):
-                        break  # FIXME update handle this error
+                    if destinationIndex == -1:
+                        antSuccess = False  # ends ant lifespan if reaches dead end
+                        break
 
                     route.append(destinationIndex)
+                    updateVisited(costMatrix, route[-2], route[-1])  # set so cost matrix has infs for route
+                if not antSuccess:
+                    continue
 
-                    updateVisited(route[-2], route[-1])
+                solverRoute = []
+                for i in range(ncities):
+                    solverRoute.append(cities[route[i]])
+
+                thisSolution = TSPSolution(solverRoute)
+                if thisSolution.cost < bssf.cost:
+                    bssf = thisSolution
+
+                # increment pheromones??????
+                incrementPheromoneMatrix(pheromoneMatrix, route, bssf.cost)
 
             # decrements after each batch but maybe have decrement after each ant instead
             decrementedMatrix(pheromoneMatrix)
 
+            # determine if foundTour
 
-            perm = np.random.permutation(ncities)
-            route = []
-            # Now build the route using the random permutation
-            for i in range(ncities):
-                route.append(cities[perm[i]])
-            bssf = TSPSolution(route)
-            count += 1
-            if bssf.cost < np.inf:
-                # Found a valid route
-                foundTour = True
+
         end_time = time.time()
         results['cost'] = bssf.cost if foundTour else math.inf
         results['time'] = end_time - start_time
@@ -286,3 +293,7 @@ def getRandomEdge(costMatrix, pheromoneMatrix, parentCityIndex) -> int:
     probability_distribution = pheromone_level / sum(pheromone_level)
     edge = np.random.choice(valid_cities, probability_distribution) if len(valid_cities) > 0 else -1
     return edge
+
+
+def incrementPheromoneMatrix(pheromoneMatrix: np.ndarray, route, cost):
+    pass
