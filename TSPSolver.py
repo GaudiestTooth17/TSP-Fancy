@@ -150,12 +150,13 @@ class TSPSolver:
     time spent to find best solution, total number of solutions found during search, the 
     best solution found.  You may use the other three field however you like.
     algorithm
-    </returns> 
+    </returns>
     """
 
     def fancy(self, time_allowance=60.0):
         batchRoutes = []
         route = []  # List of city indexes
+        cities = self._scenario.cities
         """
         Ant colony algorithm
         * Start at city index 0
@@ -184,12 +185,17 @@ class TSPSolver:
 
 # Returns a 2D Numpy Array (Adjacency matrix).
 def getCostMatrix(cities):
-    pass
+    matrix = np.empty(shape=(len(cities), len(cities)))
+    for i in range(len(cities)):
+        city: City = cities[i]
+        for j in range(len(cities)):
+            matrix[i][j] = city.cost_to(cities[j])
+    return matrix
 
 
 # Returns 2D Numpy Array
 def getPheromoneMatrix(numCities):
-    pass
+    return np.zeros(shape=(numCities, numCities))
 
 
 dec_value = 1
