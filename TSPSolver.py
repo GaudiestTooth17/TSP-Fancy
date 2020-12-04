@@ -157,6 +157,59 @@ class TSPSolver:
         batchRoutes = []
         route = []  # List of city indexes
         cities = self._scenario.cities
+
+        threshold = .50  # the percent of cities that follow same route for route to be accepted
+        batchSize = 50  # number of ants per batch
+
+        results = {}
+        cities = self._scenario.cities
+        ncities = len(cities)
+        foundTour = False
+        count = 0
+        bssf = None
+
+        costMatrix = getCostMatrix(cities)
+        pheromoneMatrix = getPheromoneMatrix(ncities)
+
+
+        start_time = time.time()
+        while not foundTour and time.time() - start_time < time_allowance:
+            # run a batch of ants and find solution
+
+            batchRoutes = []  # figure out way to check which route is most common in batch
+
+            for ant in range(batchSize):
+                # runs an ant through the maze getting route then appending route to batchRoutes
+                if not time.time() - start_time < time_allowance:
+                    break  # breaks loop if time is out
+                route = []  # List of city indexes
+                route.append(0)
+                for i in range(ncities):
+                    # make the route
+                    route.append(getRandomEdge(costMatrix, pheromoneMatrix, route[-1]))
+            # decrements after each batch but maybe have decrement after each ant instead
+            decrementedMatrix(pheromoneMatrix)
+
+
+            perm = np.random.permutation(ncities)
+            route = []
+            # Now build the route using the random permutation
+            for i in range(ncities):
+                route.append(cities[perm[i]])
+            bssf = TSPSolution(route)
+            count += 1
+            if bssf.cost < np.inf:
+                # Found a valid route
+                foundTour = True
+        end_time = time.time()
+        results['cost'] = bssf.cost if foundTour else math.inf
+        results['time'] = end_time - start_time
+        results['count'] = count
+        results['soln'] = bssf
+        # results['max'] = None
+        # results['total'] = None
+        # results['pruned'] = None
+        return results
         """
         Ant colony algorithm
         * Start at city index 0
