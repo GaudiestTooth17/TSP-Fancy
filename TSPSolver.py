@@ -275,7 +275,7 @@ def decrementedMatrix(matrix: np.ndarray) -> np.ndarray:
     :param matrix: a pheromone matrix
     :return: a new 2D Numpy Array with decremented values
     """
-    new_matrix = matrix.copy() - dec_value
+    new_matrix = np.where(matrix > 0, matrix - 1, 0)
     return new_matrix
 
 
@@ -293,6 +293,13 @@ def getRandomEdge(costMatrix, pheromoneMatrix, parentCityIndex) -> int:
     probability_distribution = pheromone_level / sum(pheromone_level)
     edge = np.random.choice(valid_cities, probability_distribution) if len(valid_cities) > 0 else -1
     return edge
+
+
+def updateVisited(costMatrix, destinationCity):
+    """
+    Make destinationCity unreachable. Modifies costMatrix in place.
+    """
+    costMatrix[:, destinationCity] = np.inf
 
 
 def incrementPheromoneMatrix(pheromoneMatrix: np.ndarray, route, cost):
