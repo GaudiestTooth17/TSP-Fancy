@@ -186,6 +186,7 @@ class TSPSolver:
                 route = []  # List of city indexes
                 costMatrix = getCostMatrix(cities)  # resets cost matrix each ant
                 route.append(0)  # starts at same place every time
+                updateVisited(costMatrix, route[-1])  # set so cost matrix has infs for route
                 antSuccess = True
                 for i in range(ncities):
                     # make the route
