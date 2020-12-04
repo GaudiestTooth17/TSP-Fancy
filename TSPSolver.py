@@ -192,13 +192,29 @@ def getPheromoneMatrix(numCities):
     pass
 
 
-# Returns new 2D Numpy Array with decremented values
-#     Used for decrementing all pheromone counts
-def decrementedMatrix(matrix):
-    pass
+dec_value = 1
 
 
-# Returns index of destination city.
-#    Calculates random edge while prioritizing higher pheromone counts
-def getRandomEdge(costMatrix, pheromoneMatrix, parentCityIndex):
-    pass
+def decrementedMatrix(matrix: np.ndarray) -> np.ndarray:
+    """
+    Used for decrementing all pheromone counts
+    :param matrix: a pheromone matrix
+    :return: a new 2D Numpy Array with decremented values
+    """
+    new_matrix = matrix.copy() - dec_value
+    return new_matrix
+
+
+def getRandomEdge(costMatrix, pheromoneMatrix, parentCityIndex) -> int:
+    """
+    Calculates random edge while prioritizing higher pheromone counts
+    :param costMatrix: the adjacency matrix of cities
+    :param pheromoneMatrix: a matrix where the (i, j)th entry is the pheromone level on the
+    edge between cities i and j
+    :param parentCityIndex: The index of where the ant currently is
+    :return: index of destination city
+    """
+    valid_cities = np.where(costMatrix[parentCityIndex] < np.inf)[0]
+    pheromone_level = pheromoneMatrix[valid_cities]
+    probability_distribution = pheromone_level / sum(pheromone_level)
+    return np.random.choice(valid_cities, probability_distribution)
