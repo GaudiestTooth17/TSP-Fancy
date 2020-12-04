@@ -276,4 +276,5 @@ def getRandomEdge(costMatrix, pheromoneMatrix, parentCityIndex) -> int:
     valid_cities = np.where(costMatrix[parentCityIndex] < np.inf)[0]
     pheromone_level = pheromoneMatrix[valid_cities]
     probability_distribution = pheromone_level / sum(pheromone_level)
-    return np.random.choice(valid_cities, probability_distribution)
+    edge = np.random.choice(valid_cities, probability_distribution) if len(valid_cities) > 0 else -1
+    return edge
