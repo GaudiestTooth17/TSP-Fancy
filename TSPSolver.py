@@ -268,7 +268,7 @@ def decrementedMatrix(matrix: np.ndarray) -> np.ndarray:
     :param matrix: a pheromone matrix
     :return: a new 2D Numpy Array with decremented values
     """
-    new_matrix = matrix.copy() - dec_value
+    new_matrix = np.where(matrix > 0, matrix - 1, 0)
     return new_matrix
 
 
