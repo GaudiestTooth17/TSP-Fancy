@@ -154,7 +154,8 @@ class TSPSolver:
     """
 
     def fancy(self, time_allowance=60.0):
-        route = []
+        batchRoutes = []
+        route = []  # List of city indexes
         """
         Ant colony algorithm
         * Start at city index 0
@@ -179,3 +180,25 @@ class TSPSolver:
         
         """
         pass
+
+
+# Returns a 2D Numpy Array (Adjacency matrix).
+def getCostMatrix(cities):
+    pass
+
+
+# Returns 2D Numpy Array
+def getPheromoneMatrix(numCities):
+    pass
+
+
+# Returns new 2D Numpy Array with decremented values
+#     Used for decrementing all pheromone counts
+def decrementedMatrix(matrix):
+    pass
+
+
+# Returns index of destination city.
+#    Calculates random edge while prioritizing higher pheromone counts
+def getRandomEdge(costMatrix, pheromoneMatrix, parentCityIndex):
+    pass
