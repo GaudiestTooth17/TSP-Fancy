@@ -168,7 +168,7 @@ class TSPSolver:
         count = 0
         bssf = None
 
-        costMatrix = getCostMatrix(cities)
+
         pheromoneMatrix = getPheromoneMatrix(ncities)
 
 
@@ -183,10 +183,18 @@ class TSPSolver:
                 if not time.time() - start_time < time_allowance:
                     break  # breaks loop if time is out
                 route = []  # List of city indexes
+                costMatrix = getCostMatrix(cities)
                 route.append(0)
                 for i in range(ncities):
                     # make the route
-                    route.append(getRandomEdge(costMatrix, pheromoneMatrix, route[-1]))
+                    destinationIndex = getRandomEdge(costMatrix, pheromoneMatrix, route[-1])
+                    if (destinationIndex == -1):
+                        break  # FIXME update handle this error
+
+                    route.append(destinationIndex)
+
+                    updateVisited(route[-2], route[-1])
+
             # decrements after each batch but maybe have decrement after each ant instead
             decrementedMatrix(pheromoneMatrix)
 
@@ -277,3 +285,7 @@ def getRandomEdge(costMatrix, pheromoneMatrix, parentCityIndex) -> int:
     pheromone_level = pheromoneMatrix[valid_cities]
     probability_distribution = pheromone_level / sum(pheromone_level)
     return np.random.choice(valid_cities, probability_distribution)
+
+
+def updateVisited(costMatrix, parentIndex, destinationIndex):
+    pass
