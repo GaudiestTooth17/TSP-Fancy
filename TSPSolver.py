@@ -276,7 +276,7 @@ def decrementedMatrix(matrix: np.ndarray) -> np.ndarray:
     :param matrix: a pheromone matrix
     :return: a new 2D Numpy Array with decremented values
     """
-    new_matrix = np.where(matrix > 0, matrix - 1, 0)
+    new_matrix = np.where(matrix >= 1, matrix - 1, 0)
     return new_matrix
 
 
@@ -290,7 +290,8 @@ def getRandomEdge(costMatrix, pheromoneMatrix, parentCityIndex) -> int:
     :return: index of destination city
     """
     valid_cities = np.where(costMatrix[parentCityIndex] < np.inf)[0]
-    pheromone_level = pheromoneMatrix[valid_cities]
+    # add 2 so that cities without pheromones have a chance of getting picked
+    pheromone_level = pheromoneMatrix[valid_cities] + 2
     probability_distribution = pheromone_level / sum(pheromone_level)
     edge = np.random.choice(valid_cities, probability_distribution) if len(valid_cities) > 0 else -1
     return edge
