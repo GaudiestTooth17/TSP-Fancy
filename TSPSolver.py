@@ -195,7 +195,7 @@ class TSPSolver:
                         break
 
                     route.append(destinationIndex)
-                    updateVisited(costMatrix, route[-2], route[-1])  # set so cost matrix has infs for route
+                    updateVisited(costMatrix, route[-1])  # set so cost matrix has infs for route
                 if not antSuccess:
                     continue
 
