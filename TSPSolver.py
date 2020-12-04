@@ -193,7 +193,7 @@ class TSPSolver:
 
                     route.append(destinationIndex)
 
-                    updateVisited(route[-2], route[-1])
+                    updateVisited(costMatrix, route[-1])
 
             # decrements after each batch but maybe have decrement after each ant instead
             decrementedMatrix(pheromoneMatrix)
@@ -286,3 +286,10 @@ def getRandomEdge(costMatrix, pheromoneMatrix, parentCityIndex) -> int:
     probability_distribution = pheromone_level / sum(pheromone_level)
     edge = np.random.choice(valid_cities, probability_distribution) if len(valid_cities) > 0 else -1
     return edge
+
+
+def updateVisited(costMatrix, destinationCity):
+    """
+    Make destinationCity unreachable. Modifies costMatrix in place.
+    """
+    costMatrix[:, destinationCity] = np.inf
