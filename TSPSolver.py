@@ -199,9 +199,7 @@ class TSPSolver:
                 if not antSuccess:
                     continue
 
-                solverRoute = []
-                for i in range(ncities):
-                    solverRoute.append(cities[route[i]])
+                solverRoute = [cities[route[i]] for i in range(ncities)]
 
                 thisSolution = TSPSolution(solverRoute)
                 if thisSolution.cost != math.inf:
