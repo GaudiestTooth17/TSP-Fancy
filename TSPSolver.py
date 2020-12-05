@@ -142,15 +142,16 @@ class TSPSolver:
         pass
 
     """
-    <summary>
-    This is the entry point for the algorithm you'll write for your group project.
-    </summary>
-    <returns>
-    results dictionary for GUI that contains three ints: cost of best solution, 
-    time spent to find best solution, total number of solutions found during search, the 
-    best solution found.  You may use the other three field however you like.
-    algorithm
-    </returns>
+        Ant colony algorithm
+        * Start at city index 0
+        * while node has children
+        *    Calculate the priority of each path based on pheromone count
+        *    Choose a random edge to follow (higher priority has more probability of being chosen)
+        *    Once a valid solution is found, increment the pheromone count on each path in the solution.
+        *        Increment size is based on the total cost of the solution
+        *    Decrement all pheromone counts for all edges in the list of cities
+        * End condition run ants in batches of BATCH_SIZE, and save the most common route as BSSF if better 
+        * than last BSSF. Once PERCENT_ANTS are on same path return that result. 
     """
 
     def fancy(self, time_allowance=60.0):
@@ -166,12 +167,9 @@ class TSPSolver:
         ncities = len(cities)
         foundTour = False
         count = 0
-        bssf = {}
-        bssf['cost'] = math.inf
-
+        bssf = {'cost': math.inf}
 
         pheromoneMatrix = getPheromoneMatrix(ncities)
-
 
         start_time = time.time()
         while not foundTour and time.time() - start_time < time_allowance:
@@ -179,10 +177,8 @@ class TSPSolver:
 
             batchRoutes = {}  # figure out way to check which route is most common in batch
 
-            while len(batchRoutes) < batchSize:
+            while len(batchRoutes) < batchSize and time.time() - start_time < time_allowance:
                 # runs an ant through the maze getting route then appending route to batchRoutes
-                if not time.time() - start_time < time_allowance:
-                    break  # breaks loop if time is out
                 route = []  # List of city indexes
                 costMatrix = getCostMatrix(cities)  # resets cost matrix each ant
                 route.append(0)  # starts at same place every time
@@ -216,8 +212,6 @@ class TSPSolver:
 
             # determine if foundTour
 
-
-
         end_time = time.time()
         results['cost'] = bssf.cost if foundTour else math.inf
         results['time'] = end_time - start_time
@@ -227,30 +221,6 @@ class TSPSolver:
         # results['total'] = None
         # results['pruned'] = None
         return results
-        """
-        Ant colony algorithm
-        * Start at city index 0
-        * while node has children
-        *    Calculate the priority of each path based on pheromone count
-        *    Choose a random edge to follow (higher priority has more probability of being chosen)
-        *    Once a valid solution is found, increment the pheromone count on each path in the solution.
-        *        Increment size is based on the total cost of the solution
-        *    Decrement all pheromone counts for all edges in the list of cities
-        * End condition run ants in batches of BATCH_SIZE, and save the most common route as BSSF if better 
-        * than last BSSF. Once PERCENT_ANTS are on same path return that result. 
-
-        CLASSES:
-            Edge
-                - cost
-                - pheromoneCount
-            Matrix
-                - numpy Edge[][]
-                - decrementAllPheromones()
-                - randomizer here?
-                
-        
-        """
-        pass
 
 
 # Returns a 2D Numpy Array (Adjacency matrix).
