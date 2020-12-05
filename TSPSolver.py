@@ -264,7 +264,7 @@ def getRandomEdge(costMatrix, pheromoneMatrix, parentCityIndex) -> int:
     # add 2 so that cities without pheromones have a chance of getting picked
     pheromone_level = pheromoneMatrix[valid_cities] + 2
     probability_distribution = pheromone_level / sum(pheromone_level)
-    edge = np.random.choice(valid_cities, probability_distribution) if len(valid_cities) > 0 else -1
+    edge = np.random.choice(valid_cities, p=probability_distribution) if len(valid_cities) > 0 else -1
     return edge
 
 
