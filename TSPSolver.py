@@ -168,11 +168,12 @@ class TSPSolver:
         ncities = len(cities)
         foundTour = False
         count = 0
-        bssf = None
-
-        pheromoneMatrix = getPheromoneMatrix(ncities)
 
         start_time = time.time()
+
+        bssf = self.greedy(time_allowance)['soln']
+        pheromoneMatrix = getPheromoneMatrix(ncities)
+
         while not foundTour and time.time() - start_time < time_allowance:
             # run a batch of ants and find solution
 
@@ -185,7 +186,7 @@ class TSPSolver:
                 costMatrix = getCostMatrix(cities)  # resets cost matrix each ant
                 updateVisited(costMatrix, route[-1])  # set so cost matrix has infs for route
                 antSuccess = True
-                for i in range(ncities):
+                for i in range(ncities - 1):
                     # make the route
                     destinationIndex = getRandomEdge(costMatrix, pheromoneMatrix, route[-1])
                     if destinationIndex == -1:
@@ -208,7 +209,7 @@ class TSPSolver:
                     bssf = thisSolution
 
                 # increment pheromones
-                incrementPheromoneMatrix(pheromoneMatrix, route, bssf.cost)
+                incrementPheromoneMatrix(pheromoneMatrix, route, thisSolution.cost)
             # If there are no valid solutions in the batch, don't calculate threshold
             if numFound == 0:
                 break
