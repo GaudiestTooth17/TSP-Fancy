@@ -161,7 +161,7 @@ class TSPSolver:
         threshold = .50  # the percent of cities that follow same route for route to be accepted
         batchSize = 50  # number of solutions per batch
 
-        results = {}
+        results = []
         cities = self._scenario.cities
         ncities = len(cities)
         foundTour = False
@@ -177,7 +177,7 @@ class TSPSolver:
         while not foundTour and time.time() - start_time < time_allowance:
             # run a batch of ants and find solution
 
-            batchRoutes = []  # figure out way to check which route is most common in batch
+            batchRoutes = {}  # figure out way to check which route is most common in batch
 
             while len(batchRoutes) < batchSize:
                 # runs an ant through the maze getting route then appending route to batchRoutes
@@ -207,7 +207,7 @@ class TSPSolver:
                 thisSolution = TSPSolution(solverRoute)
                 if thisSolution.cost < bssf.cost:
                     bssf = thisSolution
-
+                batchRoutes.append(thisSolution)
                 # increment pheromones??????
                 incrementPheromoneMatrix(pheromoneMatrix, route, bssf.cost)
 
@@ -215,6 +215,7 @@ class TSPSolver:
             decrementMatrix(pheromoneMatrix)
 
             # determine if foundTour
+
 
 
         end_time = time.time()
