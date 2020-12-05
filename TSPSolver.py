@@ -210,6 +210,7 @@ class TSPSolver:
 
                 # increment pheromones
                 incrementPheromoneMatrix(pheromoneMatrix, route, bssf.cost)
+            # If there are no valid solutions in the batch, don't calculate threshold
             if numFound == 0:
                 break
             # decrements after each batch but maybe have decrement after each ant instead
