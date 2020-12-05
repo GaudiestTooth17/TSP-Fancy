@@ -212,7 +212,7 @@ class TSPSolver:
                 incrementPheromoneMatrix(pheromoneMatrix, route, bssf.cost)
 
             # decrements after each batch but maybe have decrement after each ant instead
-            decrementedMatrix(pheromoneMatrix)
+            decrementMatrix(pheromoneMatrix)
 
             # determine if foundTour
 
@@ -270,14 +270,14 @@ def getPheromoneMatrix(numCities):
 dec_value = 1
 
 
-def decrementedMatrix(matrix: np.ndarray) -> np.ndarray:
+def decrementMatrix(matrix: np.ndarray) -> None:
     """
-    Used for decrementing all pheromone counts
+    Used for decrementing all pheromone counts. Mutates matrix in place.
     :param matrix: a pheromone matrix
-    :return: a new 2D Numpy Array with decremented values
+    :return: None
     """
-    new_matrix = np.where(matrix >= 1, matrix - 1, 0)
-    return new_matrix
+    sub_matrix = np.where(matrix >= 1, 1, 0)
+    matrix -= sub_matrix
 
 
 def getRandomEdge(costMatrix, pheromoneMatrix, parentCityIndex) -> int:
