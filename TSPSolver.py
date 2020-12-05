@@ -107,8 +107,10 @@ class TSPSolver:
                 # route.append(starting_city)
                 break
 
-        end_time = time.time()
         solution = TSPSolution(route)
+        if solution.cost == np.inf:
+            return self.defaultRandomTour(time_allowance)
+        end_time = time.time()
         results = {'cost': solution.cost if len(route) == num_cities else np.inf,
                    'time': end_time - start_time,
                    'count': count,
