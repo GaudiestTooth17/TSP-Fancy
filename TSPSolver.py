@@ -7,6 +7,7 @@ import time
 import numpy as np
 from TSPClasses import *
 import heapq
+from collections import defaultdict
 import itertools
 from queue import PriorityQueue
 
@@ -175,7 +176,7 @@ class TSPSolver:
         while not foundTour and time.time() - start_time < time_allowance:
             # run a batch of ants and find solution
 
-            batchRoutes = {}  # figure out way to check which route is most common in batch
+            batchRoutes = defaultdict(lambda: 0)
 
             while len(batchRoutes) < batchSize and time.time() - start_time < time_allowance:
                 # runs an ant through the maze getting route then appending route to batchRoutes
@@ -203,14 +204,17 @@ class TSPSolver:
                 thisSolution = TSPSolution(solverRoute)
                 if thisSolution.cost < bssf.cost:
                     bssf = thisSolution
-                batchRoutes.append(thisSolution)
-                # increment pheromones??????
+                batchRoutes[thisSolution] += 1
+                # increment pheromones
                 incrementPheromoneMatrix(pheromoneMatrix, route, bssf.cost)
 
             # decrements after each batch but maybe have decrement after each ant instead
             decrementMatrix(pheromoneMatrix)
 
-            # determine if foundTour
+            # If a single solution appears more than the defined threshold, return that solution
+            maxNumSameSolution = max(batchRoutes.items(), key=lambda elem: elem[1])[1]
+            if maxNumSameSolution >= threshold * batchSize:
+                foundTour = True
 
         end_time = time.time()
         results = {
