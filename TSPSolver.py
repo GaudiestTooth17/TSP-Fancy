@@ -162,7 +162,7 @@ class TSPSolver:
         route = []  # List of city indexes
         cities = self._scenario.cities
 
-        threshold = .50  # the percent of cities that follow same route for route to be accepted
+        threshold = .20  # the percent of cities that follow same route for route to be accepted
         batchSize = 50  # number of solutions per batch
 
         results = []
@@ -184,7 +184,7 @@ class TSPSolver:
 
             while numFound < batchSize and time.time() - start_time < time_allowance:
                 # runs an ant through the maze getting route then appending route to batchRoutes
-                route = [0]  # List of city indexes, starts at same place every time
+                route = [random.randrange(0, ncities)]  # Start at a random city index
                 costMatrix = getCostMatrix(cities)  # resets cost matrix each ant
                 updateVisited(costMatrix, route[-1])  # set so cost matrix has infs for route
                 antSuccess = True
@@ -236,6 +236,9 @@ class TSPSolver:
         return results
 
 
+pheromoneScalar = 100000
+
+
 # Returns a 2D Numpy Array (Adjacency matrix).
 def getCostMatrix(cities):
     matrix = np.empty(shape=(len(cities), len(cities)))
@@ -251,16 +254,15 @@ def getPheromoneMatrix(numCities):
     return np.zeros(shape=(numCities, numCities))
 
 
-dec_value = 1
-
-
 def decrementMatrix(matrix: np.ndarray) -> None:
     """
     Used for decrementing all pheromone counts. Mutates matrix in place.
     :param matrix: a pheromone matrix
     :return: None
     """
-    sub_matrix = np.where(matrix >= 1, 1, 0)
+    # FIXME Figure out how to calculate decreaseVal based on pheromoneScalar
+    decreaseVal = 100
+    sub_matrix = np.where(matrix >= decreaseVal, decreaseVal, matrix)
     matrix -= sub_matrix
 
 
@@ -289,6 +291,7 @@ def updateVisited(costMatrix, destinationCity):
 
 
 def incrementPheromoneMatrix(pheromoneMatrix: np.ndarray, route, cost):
-    increaseVal = 100000 / cost
+    # FIXME Figure out how to calculate increaseVal
+    increaseVal = pheromoneScalar / cost
     for i in range(len(route) - 1):
         pheromoneMatrix[route[i]][route[i + 1]] += increaseVal
