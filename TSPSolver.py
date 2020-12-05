@@ -194,7 +194,7 @@ class TSPSolver:
                         break
 
                     route.append(destinationIndex)
-                    numFound += 1
+
                     updateVisited(costMatrix, route[-1])  # set so cost matrix has infs for route
                 if not antSuccess:
                     continue
@@ -202,6 +202,7 @@ class TSPSolver:
                 solverRoute = []
                 for i in range(ncities):
                     solverRoute.append(cities[route[i]])
+                    numFound += 1
 
                 thisSolution = TSPSolution(solverRoute)
                 if thisSolution.cost < bssf.cost:
