@@ -213,13 +213,15 @@ class TSPSolver:
             # determine if foundTour
 
         end_time = time.time()
-        results['cost'] = bssf.cost if foundTour else math.inf
-        results['time'] = end_time - start_time
-        results['count'] = count
-        results['soln'] = bssf
-        # results['max'] = None
-        # results['total'] = None
-        # results['pruned'] = None
+        results = {
+            'cost': bssf.cost if foundTour else math.inf,
+            'time': end_time - start_time,
+            'count': count,
+            'soln': bssf,
+            'max': None,
+            'total': None,
+            'pruned': None
+        }
         return results
 
 
