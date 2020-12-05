@@ -168,7 +168,7 @@ class TSPSolver:
         results = []
         cities = self._scenario.cities
         ncities = len(cities)
-        foundTour = False
+        metThreshold = False
         count = 0
 
         start_time = time.time()
@@ -176,7 +176,7 @@ class TSPSolver:
         bssf = self.defaultRandomTour(time_allowance)['soln']
         pheromoneMatrix = getPheromoneMatrix(ncities)
 
-        while not foundTour and time.time() - start_time < time_allowance:
+        while not metThreshold and time.time() - start_time < time_allowance:
             # run a batch of ants and find solution
 
             batchRoutes = defaultdict(lambda: 0)
@@ -221,11 +221,11 @@ class TSPSolver:
             # If a single solution appears more than the defined threshold, return that solution
             maxNumSameSolution = max(batchRoutes.items(), key=lambda elem: elem[1])[1]
             if maxNumSameSolution >= threshold * batchSize:
-                foundTour = True
+                metThreshold = True
 
         end_time = time.time()
         results = {
-            'cost': bssf.cost if foundTour else math.inf,
+            'cost': bssf.cost,
             'time': end_time - start_time,
             'count': count,
             'soln': bssf,
