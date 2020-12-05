@@ -177,8 +177,9 @@ class TSPSolver:
             # run a batch of ants and find solution
 
             batchRoutes = defaultdict(lambda: 0)
+            numFound = 0
 
-            while len(batchRoutes) < batchSize and time.time() - start_time < time_allowance:
+            while numFound < batchSize and time.time() - start_time < time_allowance:
                 # runs an ant through the maze getting route then appending route to batchRoutes
                 route = []  # List of city indexes
                 costMatrix = getCostMatrix(cities)  # resets cost matrix each ant
@@ -193,6 +194,7 @@ class TSPSolver:
                         break
 
                     route.append(destinationIndex)
+                    numFound += 1
                     updateVisited(costMatrix, route[-1])  # set so cost matrix has infs for route
                 if not antSuccess:
                     continue
@@ -207,7 +209,8 @@ class TSPSolver:
                 batchRoutes[thisSolution] += 1
                 # increment pheromones
                 incrementPheromoneMatrix(pheromoneMatrix, route, bssf.cost)
-
+            if numFound == 0:
+                break
             # decrements after each batch but maybe have decrement after each ant instead
             decrementMatrix(pheromoneMatrix)
 
