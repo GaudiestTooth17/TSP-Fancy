@@ -202,12 +202,14 @@ class TSPSolver:
                 solverRoute = []
                 for i in range(ncities):
                     solverRoute.append(cities[route[i]])
-                    numFound += 1
 
                 thisSolution = TSPSolution(solverRoute)
+                if thisSolution.cost != math.inf:
+                    numFound += 1
+                    batchRoutes[thisSolution] += 1
                 if thisSolution.cost < bssf.cost:
                     bssf = thisSolution
-                batchRoutes[thisSolution] += 1
+
                 # increment pheromones
                 incrementPheromoneMatrix(pheromoneMatrix, route, bssf.cost)
             if numFound == 0:
