@@ -6,6 +6,7 @@ from typing import List
 
 import numpy as np
 import random
+from functools import reduce
 import time
 
 
@@ -13,6 +14,7 @@ class TSPSolution:
     def __init__(self, listOfCities: List['City']):
         self.route = listOfCities
         self.cost = self._costOfRoute()
+        self._hash = hash(''.join((str(city.index) for city in self.route)))
 
     # print( [c._index for c in listOfCities] )
 
@@ -39,6 +41,20 @@ class TSPSolution:
             return None
         elist.append((self.route[-1], self.route[0], int(math.ceil(dist))))
         return elist
+
+    def __hash__(self):
+        return self._hash
+
+    def __eq__(self, other: 'TSPSolution'):
+        if other is None or self.cost != other.cost or len(self.route) != len(other.route):
+            return False
+        # Make a list (really a generator) of whether or not each city on the route equals the other
+        equalities = (my_city == other_city for my_city, other_city in zip(self.route, other.route))
+        # only return True if they all are equal
+        return all(equalities)
+
+    def __ne__(self, other):
+        return not self == other
 
 
 def nameForInt(num):
