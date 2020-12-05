@@ -173,7 +173,7 @@ class TSPSolver:
 
         start_time = time.time()
 
-        bssf = self.greedy(time_allowance)['soln']
+        bssf = self.defaultRandomTour(time_allowance)['soln']
         pheromoneMatrix = getPheromoneMatrix(ncities)
 
         while not foundTour and time.time() - start_time < time_allowance:
