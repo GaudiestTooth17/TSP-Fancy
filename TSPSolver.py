@@ -181,9 +181,8 @@ class TSPSolver:
 
             while numFound < batchSize and time.time() - start_time < time_allowance:
                 # runs an ant through the maze getting route then appending route to batchRoutes
-                route = []  # List of city indexes
+                route = [0]  # List of city indexes, starts at same place every time
                 costMatrix = getCostMatrix(cities)  # resets cost matrix each ant
-                route.append(0)  # starts at same place every time
                 updateVisited(costMatrix, route[-1])  # set so cost matrix has infs for route
                 antSuccess = True
                 for i in range(ncities):
