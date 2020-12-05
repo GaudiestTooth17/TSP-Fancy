@@ -1,25 +1,20 @@
 import unittest
 from TSPSolver import getPheromoneMatrix, decrementMatrix, incrementPheromoneMatrix
 
-
-def printMatrix(matrix):
-    text = ''
-    for i in range(len(matrix)):
-        for j in range(len(matrix[0])):
-            text += str(matrix[i][j]) + '   '
-        text += '\n'
-    text += '\n'
-    print(text)
-
-
+print('Original Matrix')
 numCities = 8
 pheromoneMatrix = getPheromoneMatrix(numCities)
-printMatrix(pheromoneMatrix)
+print(pheromoneMatrix)
+print()
 
+print('Incremented Matrix')
 route = [0, 3, 1, 4, 2]
-cost = 9
+cost = 500
 incrementPheromoneMatrix(pheromoneMatrix, route, cost)
-printMatrix(pheromoneMatrix)
+print(pheromoneMatrix)
+print()
 
 decrementMatrix(pheromoneMatrix)
-printMatrix(pheromoneMatrix)
+print('Decremented Matrix')
+print(pheromoneMatrix)
+print()
