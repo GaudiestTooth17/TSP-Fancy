@@ -168,7 +168,7 @@ class TSPSolver:
         ncities = len(cities)
         foundTour = False
         count = 0
-        bssf = {'cost': math.inf}
+        bssf = None
 
         pheromoneMatrix = getPheromoneMatrix(ncities)
 
