@@ -209,6 +209,7 @@ class TSPSolver:
                     batchRoutes[thisSolution] += 1
                 if thisSolution.cost < bssf.cost:
                     bssf = thisSolution
+                    print('TIME:', time.time() - start_time, 'BSSF:', bssf.cost)
                     count += 1
 
                 # increment pheromones
@@ -293,6 +294,6 @@ def updateVisited(costMatrix, destinationCity):
 
 def incrementPheromoneMatrix(pheromoneMatrix: np.ndarray, route, cost):
     # FIXME Figure out how to calculate increaseVal
-    increaseVal = P_SCALAR / cost
+    increaseVal = 5 ** (P_SCALAR / cost)
     for i in range(len(route) - 1):
         pheromoneMatrix[route[i]][route[i + 1]] += increaseVal
