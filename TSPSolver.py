@@ -209,6 +209,7 @@ class TSPSolver:
                     batchRoutes[thisSolution] += 1
                 if thisSolution.cost < bssf.cost:
                     bssf = thisSolution
+                    count += 1
 
                 # increment pheromones
                 incrementPheromoneMatrix(pheromoneMatrix, route, thisSolution.cost)
