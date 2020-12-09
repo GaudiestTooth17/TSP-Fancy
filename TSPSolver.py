@@ -164,7 +164,7 @@ class TSPSolver:
         count = 0
 
         threshold = .80  # the percent of cities that follow same route for route to be accepted
-        batchSize = 3 * ncities  # number of solutions per batch
+        batchSize = 50  # number of solutions per batch
 
         start_time = time.time()
 
