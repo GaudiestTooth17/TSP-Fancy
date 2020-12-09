@@ -168,7 +168,7 @@ class TSPSolver:
 
         start_time = time.time()
 
-        bssf = self.defaultRandomTour(time_allowance)['soln']
+        bssf = self.greedy(time_allowance)['soln']
         global RANDOM_COST
         RANDOM_COST = bssf.cost
         pheromoneMatrix = getPheromoneMatrix(ncities)
