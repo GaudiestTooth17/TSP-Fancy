@@ -158,14 +158,13 @@ class TSPSolver:
     """
 
     def fancy(self, time_allowance=60.0):
-
-        threshold = .80  # the percent of cities that follow same route for route to be accepted
-        batchSize = 50  # number of solutions per batch
-
         cities = self._scenario.cities
         ncities = len(cities)
         metThreshold = False
         count = 0
+
+        threshold = .80  # the percent of cities that follow same route for route to be accepted
+        batchSize = 3 * ncities  # number of solutions per batch
 
         start_time = time.time()
 
@@ -207,11 +206,11 @@ class TSPSolver:
                 thisSolution = TSPSolution(solverRoute)
                 if thisSolution.cost != math.inf:
                     numFound += 1
-                if thisSolution.cost < bssf.cost:
-                    bssf = thisSolution
-                    # print('TIME:', time.time() - start_time, 'BSSF:', bssf.cost)
-                    count += 1
-                batchRoutes[thisSolution] += 1
+                    batchRoutes[thisSolution] += 1
+                    if thisSolution.cost < bssf.cost:
+                        bssf = thisSolution
+                        # print('TIME:', time.time() - start_time, 'BSSF:', bssf.cost)
+                        count += 1
 
                 decrementMatrix(pheromoneMatrix)
                 # increment pheromones
