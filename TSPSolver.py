@@ -182,38 +182,15 @@ class TSPSolver:
             numFound = 0
 
             while numFound < batchSize and time.time() - start_time < time_allowance:
-                # runs an ant through the maze getting route then appending route to batchRoutes
-                # route = [random.randrange(0, ncities)]  # Start at a random city index
-                route = [0]
-                costMatrix = getCostMatrix(cities)  # resets cost matrix each ant
-                updateVisited(costMatrix, route[-1])  # set so cost matrix has infs for route
-                antSuccess = True
-                for i in range(ncities - 1):
-                    # make the route
-                    destinationIndex = getRandomEdge(costMatrix, pheromoneMatrix, route[-1])
-                    if destinationIndex == -1:
-                        antSuccess = False  # ends ant lifespan if reaches dead end
-                        break
-
-                    route.append(destinationIndex)
-
-                    updateVisited(costMatrix, route[-1])  # set so cost matrix has infs for route
-                if not antSuccess:
-                    continue
-
-                solverRoute = [cities[route[i]] for i in range(ncities)]
-
-                thisSolution = TSPSolution(solverRoute)
-                if thisSolution.cost != math.inf:
-                    numFound += 1
-                    batchRoutes[thisSolution] += 1
-                    # increment pheromones
-                    incrementPheromoneMatrix(pheromoneMatrix, route, thisSolution.cost)
-                    if thisSolution.cost < bssf.cost:
-                        bssf = thisSolution
-                        # print('TIME:', time.time() - start_time, 'BSSF:', bssf.cost)
-                        count += 1
-
+                thisSolution, route = sendAntThroughCities(cities, pheromoneMatrix)
+                numFound += 1
+                batchRoutes[thisSolution] += 1
+                # increment pheromones
+                if thisSolution.cost < bssf.cost:
+                    bssf = thisSolution
+                    # print('TIME:', time.time() - start_time, 'BSSF:', bssf.cost)
+                    count += 1
+                incrementPheromoneMatrix(pheromoneMatrix, route, thisSolution.cost)
                 decrementMatrix(pheromoneMatrix)
 
             # If there are no valid solutions in the batch, don't calculate threshold
@@ -240,6 +217,35 @@ class TSPSolver:
             'pruned': None
         }
         return results
+
+
+def sendAntThroughCities(cities: List[City], pheromoneMatrix: np.ndarray) -> Tuple[TSPSolution, List[int]]:
+    """
+    Simulate an ant following a path through the cities. It runs until it finds a valid TSP path.
+    :param cities: a list of all the cities on the map.
+    :param pheromoneMatrix: a matrix of pheromone levels on all the edge.
+    :return: A valid TSPSolution.
+    """
+    foundSolution = False
+    solution = TSPSolution([])
+    route: List[int] = []
+    while not foundSolution:
+        route = [0]
+        costMatrix = getCostMatrix(cities)
+        for i in range(len(cities) - 1):
+            # make the route
+            destinationIndex = getRandomEdge(costMatrix, pheromoneMatrix, route[-1])
+            if destinationIndex == -1:
+                antSuccess = False  # ends ant lifespan if reaches dead end
+                break
+
+            route.append(destinationIndex)
+            updateVisited(costMatrix, route[-1])  # set so cost matrix has infs for route
+
+        solution = TSPSolution([cities[route[i]] for i in range(len(cities))])
+        foundSolution = solution.cost < math.inf
+
+    return solution, route
 
 
 # Returns a 2D Numpy Array (Adjacency matrix).
