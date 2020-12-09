@@ -301,6 +301,11 @@ def updateVisited(costMatrix, destinationCity):
 
 
 def incrementPheromoneMatrix(pheromoneMatrix: np.ndarray, route, cost):
-    increaseVal = 50 / cost
+    increaseVal = (5*len(route)) / cost
     for i in range(len(route) - 1):
         pheromoneMatrix[route[i]][route[i + 1]] += increaseVal
+
+
+def print_if(msg: str, cond: bool, *, end=None) -> None:
+    if cond:
+        print(msg, end=end)
