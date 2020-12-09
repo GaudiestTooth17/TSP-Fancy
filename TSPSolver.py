@@ -241,7 +241,10 @@ def sendAntThroughCities(cities: List[City], pheromoneMatrix: np.ndarray) -> Tup
             route.append(destinationIndex)
             updateVisited(costMatrix, route[-1])  # set so cost matrix has infs for route
 
-        solution = TSPSolution([cities[route[i]] for i in range(len(cities))])
+        if len(route) != len(cities):
+            continue
+
+        solution = TSPSolution([cities[cityIndex] for cityIndex in route])
         foundSolution = solution.cost < math.inf
 
     return solution, route
