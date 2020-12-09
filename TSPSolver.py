@@ -207,14 +207,15 @@ class TSPSolver:
                 if thisSolution.cost != math.inf:
                     numFound += 1
                     batchRoutes[thisSolution] += 1
+                    # increment pheromones
+                    incrementPheromoneMatrix(pheromoneMatrix, route, thisSolution.cost)
                     if thisSolution.cost < bssf.cost:
                         bssf = thisSolution
                         # print('TIME:', time.time() - start_time, 'BSSF:', bssf.cost)
                         count += 1
 
                 decrementMatrix(pheromoneMatrix)
-                # increment pheromones
-                incrementPheromoneMatrix(pheromoneMatrix, route, thisSolution.cost)
+
             # If there are no valid solutions in the batch, don't calculate threshold
             if numFound == 0:
                 break
