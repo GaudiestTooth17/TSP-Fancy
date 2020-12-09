@@ -164,7 +164,7 @@ class TSPSolver:
         count = 0
 
         threshold = .80  # the percent of cities that follow same route for route to be accepted
-        batchSize = 3 * ncities  # number of solutions per batch
+        batchSize = 50  # number of solutions per batch
 
         start_time = time.time()
 
@@ -244,6 +244,9 @@ class TSPSolver:
 
 # Returns a 2D Numpy Array (Adjacency matrix).
 def getCostMatrix(cities):
+    """
+    O(n^2)
+    """
     matrix = np.empty(shape=(len(cities), len(cities)))
     for i in range(len(cities)):
         city: City = cities[i]
@@ -254,11 +257,15 @@ def getCostMatrix(cities):
 
 # Returns 2D Numpy Array
 def getPheromoneMatrix(numCities):
+    """
+    O(n^2)
+    """
     return np.zeros(shape=(numCities, numCities))
 
 
 def decrementMatrix(matrix: np.ndarray) -> None:
     """
+    O(n^2)
     Used for decrementing all pheromone counts. Mutates matrix in place.
     :param matrix: a pheromone matrix
     :return: None
