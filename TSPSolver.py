@@ -158,13 +158,10 @@ class TSPSolver:
     """
 
     def fancy(self, time_allowance=60.0):
-        route = []  # List of city indexes
-        cities = self._scenario.cities
 
         threshold = .80  # the percent of cities that follow same route for route to be accepted
         batchSize = 50  # number of solutions per batch
 
-        results = []
         cities = self._scenario.cities
         ncities = len(cities)
         metThreshold = False
@@ -245,10 +242,6 @@ class TSPSolver:
         return results
 
 
-P_SCALAR = 100000
-RANDOM_COST = -1
-
-
 # Returns a 2D Numpy Array (Adjacency matrix).
 def getCostMatrix(cities):
     matrix = np.empty(shape=(len(cities), len(cities)))
@@ -270,10 +263,6 @@ def decrementMatrix(matrix: np.ndarray) -> None:
     :param matrix: a pheromone matrix
     :return: None
     """
-    # FIXME Figure out how to calculate decreaseVal based on P_SCALAR
-    # decreaseVal = 100
-    # sub_matrix = np.where(matrix >= decreaseVal, decreaseVal, matrix)
-    # matrix -= sub_matrix
     matrix *= .8
 
 
@@ -312,9 +301,6 @@ def updateVisited(costMatrix, destinationCity):
 
 
 def incrementPheromoneMatrix(pheromoneMatrix: np.ndarray, route, cost):
-    # FIXME Figure out how to calculate increaseVal
-    # increaseVal = 5 ** (P_SCALAR / cost)
-    # increaseVal = 100 * (RANDOM_COST / cost)
     increaseVal = 50 / cost
     for i in range(len(route) - 1):
         pheromoneMatrix[route[i]][route[i + 1]] += increaseVal
