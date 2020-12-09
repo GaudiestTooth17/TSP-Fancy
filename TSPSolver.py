@@ -227,8 +227,8 @@ def sendAntThroughCities(cities: List[City], pheromoneMatrix: np.ndarray) -> Tup
     :return: A valid TSPSolution.
     """
     foundSolution = False
-    solution = TSPSolution([])
-    route: List[int] = []
+    solution = None
+    route = None
     while not foundSolution:
         route = [0]
         costMatrix = getCostMatrix(cities)
