@@ -158,11 +158,10 @@ class TSPSolver:
     """
 
     def fancy(self, time_allowance=60.0):
-        batchRoutes = []
         route = []  # List of city indexes
         cities = self._scenario.cities
 
-        threshold = .20  # the percent of cities that follow same route for route to be accepted
+        threshold = .80  # the percent of cities that follow same route for route to be accepted
         batchSize = 50  # number of solutions per batch
 
         results = []
@@ -174,7 +173,11 @@ class TSPSolver:
         start_time = time.time()
 
         bssf = self.defaultRandomTour(time_allowance)['soln']
+        global RANDOM_COST
+        RANDOM_COST = bssf.cost
         pheromoneMatrix = getPheromoneMatrix(ncities)
+
+        convergences = []
 
         while not metThreshold and time.time() - start_time < time_allowance:
             # run a batch of ants and find solution
@@ -184,7 +187,8 @@ class TSPSolver:
 
             while numFound < batchSize and time.time() - start_time < time_allowance:
                 # runs an ant through the maze getting route then appending route to batchRoutes
-                route = [random.randrange(0, ncities)]  # Start at a random city index
+                # route = [random.randrange(0, ncities)]  # Start at a random city index
+                route = [0]
                 costMatrix = getCostMatrix(cities)  # resets cost matrix each ant
                 updateVisited(costMatrix, route[-1])  # set so cost matrix has infs for route
                 antSuccess = True
@@ -206,26 +210,29 @@ class TSPSolver:
                 thisSolution = TSPSolution(solverRoute)
                 if thisSolution.cost != math.inf:
                     numFound += 1
-                    batchRoutes[thisSolution] += 1
                 if thisSolution.cost < bssf.cost:
                     bssf = thisSolution
-                    print('TIME:', time.time() - start_time, 'BSSF:', bssf.cost)
+                    # print('TIME:', time.time() - start_time, 'BSSF:', bssf.cost)
                     count += 1
+                batchRoutes[thisSolution] += 1
 
+                decrementMatrix(pheromoneMatrix)
                 # increment pheromones
                 incrementPheromoneMatrix(pheromoneMatrix, route, thisSolution.cost)
             # If there are no valid solutions in the batch, don't calculate threshold
             if numFound == 0:
                 break
-            # decrements after each batch but maybe have decrement after each ant instead
-            decrementMatrix(pheromoneMatrix)
 
             # If a single solution appears more than the defined threshold, return that solution
-            maxNumSameSolution = max(batchRoutes.items(), key=lambda elem: elem[1])[1]
+            maxNumSameSolution = max(batchRoutes.values())
             if maxNumSameSolution >= threshold * batchSize:
                 metThreshold = True
+            convergences.append(maxNumSameSolution / batchSize)
 
         end_time = time.time()
+        print(convergences)
+        global EXPECTED_EDGES, UNEXPECTED_EDGES
+        print('unexpected', UNEXPECTED_EDGES, 'expected', EXPECTED_EDGES)
         results = {
             'cost': bssf.cost,
             'time': end_time - start_time,
@@ -239,6 +246,7 @@ class TSPSolver:
 
 
 P_SCALAR = 100000
+RANDOM_COST = -1
 
 
 # Returns a 2D Numpy Array (Adjacency matrix).
@@ -263,9 +271,14 @@ def decrementMatrix(matrix: np.ndarray) -> None:
     :return: None
     """
     # FIXME Figure out how to calculate decreaseVal based on P_SCALAR
-    decreaseVal = 100
-    sub_matrix = np.where(matrix >= decreaseVal, decreaseVal, matrix)
-    matrix -= sub_matrix
+    # decreaseVal = 100
+    # sub_matrix = np.where(matrix >= decreaseVal, decreaseVal, matrix)
+    # matrix -= sub_matrix
+    matrix *= .8
+
+
+EXPECTED_EDGES = 0
+UNEXPECTED_EDGES = 0
 
 
 def getRandomEdge(costMatrix, pheromoneMatrix, parentCityIndex) -> int:
@@ -279,9 +292,15 @@ def getRandomEdge(costMatrix, pheromoneMatrix, parentCityIndex) -> int:
     """
     valid_cities = np.where(costMatrix[parentCityIndex] < np.inf)[0]
     # add 2 so that cities without pheromones have a chance of getting picked
-    pheromone_level = pheromoneMatrix[parentCityIndex, valid_cities] + 2
+    pheromone_level = pheromoneMatrix[parentCityIndex, valid_cities] + 1/RANDOM_COST
     probability_distribution = pheromone_level / sum(pheromone_level)
     edge = np.random.choice(valid_cities, p=probability_distribution) if len(valid_cities) > 0 else -1
+    if edge > -1 and edge != max(zip(valid_cities, probability_distribution), key=lambda e: e[1])[0]:
+        global UNEXPECTED_EDGES
+        UNEXPECTED_EDGES += 1
+    elif edge > -1:
+        global EXPECTED_EDGES
+        EXPECTED_EDGES += 1
     return edge
 
 
@@ -294,6 +313,8 @@ def updateVisited(costMatrix, destinationCity):
 
 def incrementPheromoneMatrix(pheromoneMatrix: np.ndarray, route, cost):
     # FIXME Figure out how to calculate increaseVal
-    increaseVal = 5 ** (P_SCALAR / cost)
+    # increaseVal = 5 ** (P_SCALAR / cost)
+    # increaseVal = 100 * (RANDOM_COST / cost)
+    increaseVal = 50 / cost
     for i in range(len(route) - 1):
         pheromoneMatrix[route[i]][route[i + 1]] += increaseVal
