@@ -236,7 +236,6 @@ def sendAntThroughCities(cities: List[City], pheromoneMatrix: np.ndarray) -> Tup
             # make the route
             destinationIndex = getRandomEdge(costMatrix, pheromoneMatrix, route[-1])
             if destinationIndex == -1:
-                antSuccess = False  # ends ant lifespan if reaches dead end
                 break
 
             route.append(destinationIndex)
